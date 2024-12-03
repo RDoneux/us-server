@@ -4,7 +4,8 @@ pipeline {
 
     environment {
         PORT=4000
-        DOCKER_IMAGE = 'rdoneux/templates'
+        DOCKER_IMAGE = 'rdoneux/us'
+        RAILWAY_TOKEN = credentials("US_RAILWAY_TOKEN")
     }
 
     stages {
@@ -89,7 +90,7 @@ pipeline {
 
         stage ("Publish to Docker Hub") {
             when {
-                branch 'master' // Only run this stage if the branch is 'master'
+                branch 'master'
             }
             steps {
                 sh "docker build -t $DOCKER_IMAGE:tplt-node-server ." 
@@ -103,6 +104,20 @@ pipeline {
                     sh 'docker rmi $DOCKER_IMAGE:tplt-node-server || true'
                } 
             }
+        }
+
+        stage ("Deploy") {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    sh 'npm i @railway/cli'
+                    env.PATH = "${env.WORKSPACE}/node_modules/.bin:${env.PATH}"
+                    sh 'railway up --detach --service us-server'
+                }
+            }
+
         }
     }
 
