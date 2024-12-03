@@ -7,9 +7,9 @@
   "scripts": {
     "dev": "npx nodemon ./src/index.ts",
     "build": "node ./build.mjs",
-    "start": "npm run build && cd dist && node index.js",
+    "start": "npm run database:migrate && npm run build && cd dist && node index.js",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down ",
+    "docker:down": "docker-compose down --remove-orphans",
     "lint": "npx eslint . --fix",
     "lint:ci": "npx eslint .",
     "prettier": "npx prettier . --write",
