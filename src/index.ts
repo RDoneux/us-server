@@ -6,7 +6,6 @@ import logger from './middleware/logger';
 import actuatorController from './controllers/actuator.controller';
 import { errorLog, infoLog } from './globals/logging-globals';
 import { dataSource } from './globals/data-source';
-import exampleController from './controllers/example.controller';
 
 export const environment = process.env.NODE_ENV || 'development';
 console.log(
@@ -23,8 +22,7 @@ if (environment === 'test') PORT = 4001;
 application.use(logger);
 
 // controllers
-application.use(actuatorController);
-application.use(exampleController);
+application.use('/actuator', actuatorController);
 
 // root endpoints
 application.use((request: Request, response: Response) => {
