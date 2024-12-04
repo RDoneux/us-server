@@ -21,6 +21,7 @@ if (environment === 'test') PORT = 4001;
 
 // middleware
 application.use(logger);
+application.use(express.json());
 
 // controllers
 application.use('/actuator', actuatorController);

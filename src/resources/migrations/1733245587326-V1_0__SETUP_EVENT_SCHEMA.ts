@@ -9,7 +9,7 @@ export class V10_SETUPEVENTSCHEMA1733245587326 implements MigrationInterface {
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
                 icon VARCHAR(255) NOT NULL,
-                image VARCHAR(255) NOT NULL,
+                image VARCHAR(255),
                 updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
                 created_at TIMESTAMP NOT NULL DEFAULT NOW()
             )            
