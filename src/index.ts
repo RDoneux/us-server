@@ -6,6 +6,7 @@ import logger from './middleware/logger';
 import actuatorController from './controllers/actuator.controller';
 import { errorLog, infoLog } from './globals/logging-globals';
 import { dataSource } from './globals/data-source';
+import eventController from './controllers/event.controller';
 
 export const environment = process.env.NODE_ENV || 'development';
 console.log(
@@ -23,6 +24,7 @@ application.use(logger);
 
 // controllers
 application.use('/actuator', actuatorController);
+application.use('/events', eventController);
 
 // root endpoints
 application.use((request: Request, response: Response) => {

@@ -3,6 +3,7 @@ dotenv.config();
 
 import { DataSource } from 'typeorm';
 import { testDataSource } from '../__e2e_tests__/test-utils';
+import { Event } from '../entities/event.entity';
 
 const _dataSource = new DataSource({
   type: 'mysql',
@@ -13,7 +14,7 @@ const _dataSource = new DataSource({
   database: process.env.MYSQL_DATABASE,
   // entities: ['*.entity.{js,ts}'],
   // entities: ["src/entities/*{.js,.ts}"],
-  entities: [],
+  entities: [Event],
   migrations: ['src/resources/migrations/*.ts'],
   logging: true,
   synchronize: false,

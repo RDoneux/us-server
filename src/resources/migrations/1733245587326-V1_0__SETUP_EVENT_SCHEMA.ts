@@ -5,7 +5,7 @@ export class V10_SETUPEVENTSCHEMA1733245587326 implements MigrationInterface {
     await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS events (
                 id VARCHAR(38) PRIMARY KEY NOT NULL,
-                date TIMESTAMP NOT NULL,
+                event_date TIMESTAMP NOT NULL,
                 title VARCHAR(255) NOT NULL,
                 description TEXT,
                 icon VARCHAR(255) NOT NULL,
