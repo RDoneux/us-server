@@ -4,7 +4,7 @@ import { Event } from '../entities/event.entity';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import multer from 'multer';
-import axios, {AxiosResponse} from 'axios';
+import axios, { AxiosResponse } from 'axios';
 
 const eventController = Router();
 
@@ -30,20 +30,17 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
   }
 }
 
-
 async function createEvent(request: Request, response: Response) {
   try {
-    // const event: Event = plainToClass(Event, request.body);
-    const event: Event = new Event();
-    event.date = new Date(request.body.date);
-    event.title = request.body.title;
+    const event: Event = plainToClass(Event, request.body);
+
     event.iconUrl = request.body.iconUrl;
 
     const validationErrors: ValidationError[] = await validate(event);
 
     // save file to Image service
     const imageServiceUrl = process.env.IMAGE_SERVICE_URL;
-    if(!imageServiceUrl) {
+    if (!imageServiceUrl) {
       response.status(500).json('Image service URL is not defined');
       return;
     }
