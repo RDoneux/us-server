@@ -3,11 +3,13 @@ import { EventRepository } from '../repositories/event.repository';
 import { Event } from '../entities/event.entity';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
+import multer from 'multer';
+import axios, {AxiosResponse} from 'axios';
 
 const eventController = Router();
 
 eventController.get('/', getNumberOfEventsFromRange);
-eventController.post('/', createEvent);
+eventController.post('/', multer().single('file'), createEvent);
 eventController.put('/:id', updateEvent);
 eventController.delete('/:id', deleteEvent);
 
@@ -28,10 +30,29 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
   }
 }
 
+
 async function createEvent(request: Request, response: Response) {
   try {
     const event: Event = plainToClass(Event, request.body);
     const validationErrors: ValidationError[] = await validate(event);
+
+    // save file to Image service
+    const imageServiceUrl = process.env.IMAGE_SERVICE_URL;
+    if(!imageServiceUrl) {
+      response.status(500).json('Image service URL is not defined');
+      return;
+    }
+
+    const data = new FormData();
+    if (!request.file) {
+      response.status(400).json('File is required');
+      return;
+    }
+
+    const blob = new Blob([request.file.buffer], { type: request.file.mimetype });
+    data.append('file', blob, request.file.originalname);
+    const imageServiceResponse: AxiosResponse = await axios.post(`${imageServiceUrl}/upload`, data);
+    event.imageUrl = imageServiceResponse.data;
 
     if (validationErrors.length) {
       response.status(400).json(validationErrors);
