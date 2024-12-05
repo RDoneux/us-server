@@ -33,7 +33,12 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
 
 async function createEvent(request: Request, response: Response) {
   try {
-    const event: Event = plainToClass(Event, request.body);
+    // const event: Event = plainToClass(Event, request.body);
+    const event: Event = new Event();
+    event.date = new Date(request.body.date);
+    event.title = request.body.title;
+    event.iconUrl = request.body.iconUrl;
+
     const validationErrors: ValidationError[] = await validate(event);
 
     // save file to Image service
