@@ -8,12 +8,28 @@ import { uploadImage } from '../services/event.service';
 
 const eventController = Router();
 
+eventController.get('/:id', getEventById);
 eventController.get('/', getNumberOfEventsFromRange);
 eventController.post('/', multer().single('file'), createEvent);
 eventController.put('/:id', multer().single('file'), updateEvent);
 eventController.delete('/:id', deleteEvent);
 
 const IMAGE_SERVICE_URL = process.env.IMAGE_SERVICE_URL;
+
+async function getEventById(request: Request, response: Response) {
+  try {
+    const id: string = request.params.id;
+    const event: Event | null = await EventRepository.findOneBy({ id });
+
+    if (!event) {
+      response.status(404).json('Event not found');
+    }
+
+    response.status(200).json(event);
+  } catch (error) {
+    response.status(500).json(error);
+  }
+}
 
 async function getNumberOfEventsFromRange(request: Request, response: Response) {
   try {
