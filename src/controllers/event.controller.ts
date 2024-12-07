@@ -10,8 +10,10 @@ const eventController = Router();
 
 eventController.get('/', getNumberOfEventsFromRange);
 eventController.post('/', multer().single('file'), createEvent);
-eventController.put('/:id', updateEvent);
+eventController.put('/:id', multer().single('file'), updateEvent);
 eventController.delete('/:id', deleteEvent);
+
+const IMAGE_SERVICE_URL = process.env.IMAGE_SERVICE_URL;
 
 async function getNumberOfEventsFromRange(request: Request, response: Response) {
   try {
@@ -33,14 +35,10 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
 async function createEvent(request: Request, response: Response) {
   try {
     const event: Event = plainToClass(Event, request.body);
-
-    event.iconUrl = request.body.iconUrl;
-
     const validationErrors: ValidationError[] = await validate(event);
 
     // save file to Image service
-    const imageServiceUrl = process.env.IMAGE_SERVICE_URL;
-    if (!imageServiceUrl) {
+    if (!IMAGE_SERVICE_URL) {
       response.status(500).json('Image service URL is not defined');
       return;
     }
@@ -53,7 +51,7 @@ async function createEvent(request: Request, response: Response) {
 
     const blob = new Blob([request.file.buffer], { type: request.file.mimetype });
     data.append('file', blob, request.file.originalname);
-    const imageServiceResponse: AxiosResponse = await axios.post(`${imageServiceUrl}/upload`, data);
+    const imageServiceResponse: AxiosResponse = await axios.post(`${IMAGE_SERVICE_URL}/upload`, data);
     event.imageUrl = imageServiceResponse.data;
 
     if (validationErrors.length) {
@@ -74,6 +72,14 @@ async function updateEvent(request: Request, response: Response) {
     const fieldsToUpdate: Partial<Event> = request.body;
 
     fieldsToUpdate.id = id;
+
+    if(request.file) {
+      const data = new FormData();
+      const blob = new Blob([request.file.buffer], { type: request.file.mimetype });
+      data.append('file', blob, request.file.originalname);
+      const imageServiceResponse: AxiosResponse = await axios.post(`${IMAGE_SERVICE_URL}/upload`, data);
+      fieldsToUpdate.imageUrl = imageServiceResponse.data;
+    }
 
     await EventRepository.save(fieldsToUpdate);
     response.status(200).json(await EventRepository.findOneBy({ id }));
