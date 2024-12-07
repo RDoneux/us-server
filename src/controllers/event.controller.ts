@@ -4,7 +4,7 @@ import { Event } from '../entities/event.entity';
 import { validate, ValidationError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 import multer from 'multer';
-import axios, { AxiosResponse } from 'axios';
+import { uploadImage } from '../services/event.service';
 
 const eventController = Router();
 
@@ -43,16 +43,12 @@ async function createEvent(request: Request, response: Response) {
       return;
     }
 
-    const data = new FormData();
     if (!request.file) {
       response.status(400).json('File is required');
       return;
     }
 
-    const blob = new Blob([request.file.buffer], { type: request.file.mimetype });
-    data.append('file', blob, request.file.originalname);
-    const imageServiceResponse: AxiosResponse = await axios.post(`${IMAGE_SERVICE_URL}/upload`, data);
-    event.imageUrl = imageServiceResponse.data;
+    event.imageUrl = await uploadImage(request.file);
 
     if (validationErrors.length) {
       response.status(400).json(validationErrors);
@@ -73,12 +69,8 @@ async function updateEvent(request: Request, response: Response) {
 
     fieldsToUpdate.id = id;
 
-    if(request.file) {
-      const data = new FormData();
-      const blob = new Blob([request.file.buffer], { type: request.file.mimetype });
-      data.append('file', blob, request.file.originalname);
-      const imageServiceResponse: AxiosResponse = await axios.post(`${IMAGE_SERVICE_URL}/upload`, data);
-      fieldsToUpdate.imageUrl = imageServiceResponse.data;
+    if (request.file) {
+      fieldsToUpdate.imageUrl = await uploadImage(request.file);
     }
 
     await EventRepository.save(fieldsToUpdate);
