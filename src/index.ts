@@ -15,7 +15,7 @@ console.log(
 infoLog('Starting server...');
 
 export const application = express();
-let PORT = process.env.PORT || 4000;
+let PORT = Number(process.env.PORT) || 4000;
 // if running in test environment, force to port 4001 to avoid conflicts with potentially running instances
 if (environment === 'test') PORT = 4001;
 
@@ -34,7 +34,7 @@ application.use((request: Request, response: Response) => {
 
 // start server
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-export const server = application.listen(PORT, (error?: Error) => {
+export const server = application.listen(PORT, "::" , (error?: Error) => {
   error
     ? errorLog(error)
     : infoLog(`Server launched successfully, listening at: http://localhost:${PORT}`);
