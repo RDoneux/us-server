@@ -34,7 +34,7 @@ application.use((request: Request, response: Response) => {
 
 // start server
 /* eslint-disable @typescript-eslint/no-unused-expressions */
-export const server = application.listen(PORT, "::" , (error?: Error) => {
+export const server = application.listen(PORT, '::', (error?: Error) => {
   error
     ? errorLog(error)
     : infoLog(`Server launched successfully, listening at: http://localhost:${PORT}`);
