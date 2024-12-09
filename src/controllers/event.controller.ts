@@ -43,8 +43,9 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
 
     const events: Event[] = await EventRepository.getEventNumberFromRange(dateFrom, itemNumber);
     const totalEvents: number = await EventRepository.count();
+    const pages: number = Math.ceil(totalEvents / itemNumber);
 
-    response.status(200).json({ ...events, totalEvents });
+    response.status(200).json({ events, totalEvents, pages });
   } catch (error) {
     response.status(500).json(error);
   }
