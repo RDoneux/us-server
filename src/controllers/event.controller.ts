@@ -10,6 +10,7 @@ const eventController = Router();
 
 eventController.get('/:id', getEventById);
 eventController.get('/', getNumberOfEventsFromRange);
+eventController.get('/range', getEventsFromDateRange);
 eventController.post('/', multer().single('file'), createEvent);
 eventController.put('/:id', multer().single('file'), updateEvent);
 eventController.delete('/:id', deleteEvent);
@@ -46,6 +47,23 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
     const pages: number = Math.ceil(totalEvents / itemNumber);
 
     response.status(200).json({ events, totalEvents, pages });
+  } catch (error) {
+    response.status(500).json(error);
+  }
+}
+
+async function getEventsFromDateRange(request: Request, response: Response) {
+  try {
+    const dateFrom: Date = new Date(request.query?.dateFrom as string);
+    const dateTo: Date = new Date(request.query?.dateTo as string);
+
+    if (!dateFrom || !dateTo) {
+      response.status(400).json('dateFrom & dateTo are required');
+      return;
+    }
+
+    const events: Event[] = await EventRepository.getEventsFromDateRange(dateFrom, dateTo);
+    response.status(200).json(events);
   } catch (error) {
     response.status(500).json(error);
   }

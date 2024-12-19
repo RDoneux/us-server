@@ -9,4 +9,12 @@ export const EventRepository = dataSource.getRepository(Event).extend({
       .limit(itemNumber)
       .getMany();
   },
+
+  getEventsFromDateRange(dateFrom: Date, dateTo: Date): Promise<Event[]> {
+    return this.createQueryBuilder('event')
+      .where('event.date >= :dateFrom', { dateFrom })
+      .andWhere('event.date <= :dateTo', { dateTo })
+      .orderBy('event.date', 'DESC')
+      .getMany();
+  },
 });
