@@ -8,9 +8,9 @@ import { uploadImage } from '../services/event.service';
 
 const eventController = Router();
 
+eventController.get('/range', getEventsFromDateRange);
 eventController.get('/:id', getEventById);
 eventController.get('/', getNumberOfEventsFromRange);
-eventController.get('/range', getEventsFromDateRange);
 eventController.post('/', multer().single('file'), createEvent);
 eventController.put('/:id', multer().single('file'), updateEvent);
 eventController.delete('/:id', deleteEvent);
