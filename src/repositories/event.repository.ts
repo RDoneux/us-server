@@ -17,4 +17,11 @@ export const EventRepository = dataSource.getRepository(Event).extend({
       .orderBy('event.date', 'DESC')
       .getMany();
   },
+
+  getRecordsStartAndEndDate(): Promise<{ startDate: Date; endDate: Date } | undefined> {
+    return this.createQueryBuilder('event')
+      .select('MIN(event.date)', 'startDate')
+      .addSelect('MAX(event.date)', 'endDate')
+      .getRawOne();
+  },
 });

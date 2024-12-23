@@ -9,6 +9,7 @@ import { uploadImage } from '../services/event.service';
 const eventController = Router();
 
 eventController.get('/range', getEventsFromDateRange);
+eventController.get('/record-range', getRecordsStartAndEndDate);
 eventController.get('/:id', getEventById);
 eventController.get('/', getNumberOfEventsFromRange);
 eventController.post('/', multer().single('file'), createEvent);
@@ -47,6 +48,16 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
     const pages: number = Math.ceil(totalEvents / itemNumber);
 
     response.status(200).json({ events, totalEvents, pages });
+  } catch (error) {
+    response.status(500).json(error);
+  }
+}
+
+async function getRecordsStartAndEndDate(request: Request, response: Response) {
+  try {
+    const records: { startDate: Date; endDate: Date } | undefined =
+      await EventRepository.getRecordsStartAndEndDate();
+    response.status(200).json(records);
   } catch (error) {
     response.status(500).json(error);
   }
