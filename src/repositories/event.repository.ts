@@ -18,10 +18,11 @@ export const EventRepository = dataSource.getRepository(Event).extend({
       .getMany();
   },
 
-  getRecordsStartAndEndDate(): Promise<{ startDate: Date; endDate: Date } | undefined> {
-    return this.createQueryBuilder('event')
-      .select('MIN(event.date)', 'startDate')
-      .addSelect('MAX(event.date)', 'endDate')
-      .getRawOne();
+  async getRecordsStartAndEndDate(): Promise<string[]> {
+    const result = await this.createQueryBuilder('event')
+      .select("DISTINCT DATE_FORMAT(event.date, '%Y-%m-01')", 'monthYear')
+      .getRawMany();
+
+    return result.map((row) => row.monthYear);
   },
 });

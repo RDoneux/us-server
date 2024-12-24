@@ -55,8 +55,7 @@ async function getNumberOfEventsFromRange(request: Request, response: Response) 
 
 async function getRecordsStartAndEndDate(request: Request, response: Response) {
   try {
-    const records: { startDate: Date; endDate: Date } | undefined =
-      await EventRepository.getRecordsStartAndEndDate();
+    const records: string[] = await EventRepository.getRecordsStartAndEndDate();
     response.status(200).json(records);
   } catch (error) {
     response.status(500).json(error);
